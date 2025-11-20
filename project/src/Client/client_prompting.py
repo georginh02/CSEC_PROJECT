@@ -1,10 +1,18 @@
 def encryption_type() -> int:
-    "asks the client for the type of "
+    """
+    asks the client if they want encrypted communication or not
+     
+    Encrypted:
+    - If the client selects number 1 then it the function will store number one 
+
+    Non Encrypted:
+    - 
+    """
     start_packet_options= {
         "Non Secured RFMP v1.0": 0 ,
         "Secured RFMP v1.0" : 1
         }
-    message = f"If you want to use {list(start_packet_options.keys())[0]} please enter 0 or please please enter 1 for {list(start_packet_options.keys())[1]}: "
+    message = f"If you want to use {list(start_packet_options.keys())[0]} please enter 0 or please enter 1 for {list(start_packet_options.keys())[1]}: "
     
     try:
         user_inp = int(input(message))
@@ -21,5 +29,3 @@ def encryption_type() -> int:
     else:
         print(f"you have selected {list(start_packet_options.keys())[1]}")
         return start_packet_options["Secured RFMP v1.0"]
-
-

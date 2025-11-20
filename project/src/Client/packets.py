@@ -1,12 +1,10 @@
-from project.src.Client.client_prompting import encryption_type
+from client_prompting import encryption_type
 
-def start_packet() -> list:
+def start_packet() -> list[str]:
     secure_flag = encryption_type()
-    packet = ["SS" , "RMFP" , "v1.0" , secure_flag]
+    packet = ["SS" , "RFMP" , "v1.0" , str(secure_flag)]
     return packet
 
-def main():
-    print(start_packet())
-
-if __name__ == "__main__":
-    main()
+def packet_formatter(packet) -> str:
+    message = "(" + ",".join(packet) + ")"
+    return message
