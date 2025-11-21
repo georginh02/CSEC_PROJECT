@@ -17,19 +17,20 @@ def main():
     print(f"sending {initial_message} packet to server...")
     s.send(initial_message.encode("utf-8"))
 
-    if initial_message.strip("()").endswith("0"):
-        """Awaiting response from the server for unencrypted communication"""
-        data_recived = s.recv(1024)
-        decoded_response_from_server = data_recived.decode("utf-8")
+    """Awaiting response from the server for unencrypted communication or encrypted communication"""
+    data_recived = s.recv(1024)
+    decoded_response_from_server = data_recived.decode("utf-8")
+    
+    if len(decoded_response_from_server.strip("()")) == 2:
+        """If we only recive the CC packet from the server we will contiune with the unencrypted communication"""
+        
         print(f"reciving response from server: {decoded_response_from_server}")
 
-    """" Now if the communication is encrypted then we have to first recive the Confirm-Connection-Packet and then send out the Encryption-Packet"""
-    if initial_message.strip("()").endswith("1"):
-        recived_connection_packet = s.recv(1024)
-        connection_packet_from_server = recived_connection_packet.decode("utf-8")
-        print(f"reciving connection packet from server: {connection_packet_from_server} packet")
+    if len(decoded_response_from_server.strip("()")) > 2:
+        """" Now if the communication is encrypted then we have to first recive the Confirm-Connection-Packet and then send out the Encryption-Packet"""        
+        print(f"reciving connection packet from server: {decoded_response_from_server}")
         
-        decoded_servers_public_key = rsa_public_key_converter(connection_packet_from_server)
+        decoded_servers_public_key = rsa_public_key_converter(decoded_response_from_server)
         
         
 

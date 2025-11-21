@@ -1,3 +1,5 @@
+from session import session_generator , random_number
+
 def encryption_type() -> int:
     """
     asks the client if they want encrypted communication or not
@@ -29,3 +31,15 @@ def encryption_type() -> int:
     else:
         print(f"you have selected {list(start_packet_options.keys())[1]}")
         return start_packet_options["Secured RFMP v1.0"]
+
+
+def encryption_choice() -> str:
+    user_input = input("what type of encryption do you want Aes or Caeser: ")
+    if user_input.lower()== "aes":
+        return session_generator()
+    elif user_input.lower() == "caeser":
+        return random_number()
+    else:
+         print("pls enter a proper option")
+         encryption_choice() 
+         

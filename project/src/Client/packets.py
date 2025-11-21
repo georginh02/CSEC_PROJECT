@@ -5,6 +5,9 @@ def start_packet() -> list[str]:
     packet = ["SS" , "RFMP" , "v1.0" , str(secure_flag)]
     return packet
 
+def encryption_packet() -> str:
+    return "(" + "EC" + ""
+
 def packet_formatter(packet) -> str:
     message = "(" + ",".join(packet) + ")"
     return message
