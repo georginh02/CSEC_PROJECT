@@ -35,6 +35,9 @@ def algo_and_encrypted_session(server_public_key: bytes) -> tuple[str , str]:
         return algorithm, base64_conversion
 
 
+def ec_packet() -> str:
+    pass
+
 def packet_formatter(packet) -> str:
     """ this packet formatter function formats the initial packet"""
     message = "(" + ",".join(packet) + ")"
