@@ -34,12 +34,12 @@ def encryption_type() -> int:
 
 
 def encryption_choice() -> str:
-    user_input = input("what type of encryption do you want Aes or Caeser: ")
+    user_input = input("what type of encryption do you want Aes or Caesar: ")
     if user_input.lower()== "aes":
-        return session_generator()
-    elif user_input.lower() == "caeser":
-        return random_number()
+        return user_input.lower()
+    elif user_input.lower() == "caesar":
+        return user_input.lower()
     else:
          print("pls enter a proper option")
-         encryption_choice() 
+         return encryption_choice() 
          
