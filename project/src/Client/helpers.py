@@ -12,5 +12,3 @@ def get_server_rsa_public_key(server_public_key: bytes) :
     return server_public_key
     
 
-def encrypting_caeser():
-    pass

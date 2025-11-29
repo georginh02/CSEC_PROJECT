@@ -1,5 +1,6 @@
 from client_prompting import encryption_type , encryption_choice
 from session import session_generator , random_number
+from rsa_key_generation_client import get_rsa_public_key_client
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
 import base64
@@ -35,10 +36,18 @@ def algo_and_encrypted_session(server_public_key: bytes) -> tuple[str , str]:
         return algorithm, base64_conversion
 
 
-def ec_packet() -> str:
-    pass
+def ec_packet(server_public_key: bytes) -> str:
+    algorithm , base64_conversion = algo_and_encrypted_session(server_public_key)
+    client_rsa_public_key = get_rsa_public_key_client()
+    client_rsa_public_key = client_rsa_public_key.decode("utf-8")
+    complete_ec_packet = "(" +"EC" + "," + algorithm + ","  + base64_conversion + "," + client_rsa_public_key + ")"
+    return complete_ec_packet
+    
+    
+
 
 def packet_formatter(packet) -> str:
     """ this packet formatter function formats the initial packet"""
     message = "(" + ",".join(packet) + ")"
     return message
+

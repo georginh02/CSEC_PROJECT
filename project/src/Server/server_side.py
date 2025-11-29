@@ -26,6 +26,11 @@ class myThread(threading.Thread):
         if is_secure(decoded_setup_packet):
             sending_secure_connection_packet = self.sock.send(secure_connection_packet().encode("utf-8"))
             print(f"sending secure Confirm-Connection-Packet to client {sending_secure_connection_packet}...")
+            
+            # waiting for an ec packet from the server
+            recived_ec_packet = self.sock.recv(1024)
+            decoded_ec_packet = recived_ec_packet.decode("utf-8")
+            print(f"recived ec packet from client.. \n {decoded_ec_packet}")
         else:
             na_secure_packet = self.sock.send(not_secure_packet().encode("utf-8"))
             print(f"Sending {na_secure_packet} packet(s) to client as connection will not be encrypted")   

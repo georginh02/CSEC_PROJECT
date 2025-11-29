@@ -1,5 +1,5 @@
 import socket
-from packets import start_packet , packet_formatter , algo_and_encrypted_session
+from packets import start_packet , packet_formatter , algo_and_encrypted_session , ec_packet
 from helpers import rsa_public_key_converter 
 import base64
 
@@ -34,8 +34,8 @@ def main():
         decoded_servers_public_key = rsa_public_key_converter(decoded_response_from_server)
         
         # store the servers rsa public key in a function that will be used later in to encrypt the session id with the servers public key
-        algo_and_encrypted_session(decoded_servers_public_key)
-        
-        
+        complete_ec_packet = ec_packet(decoded_servers_public_key)
+        s.send(complete_ec_packet.encode("utf-8"))
+        print(f"sending ec packet to server {complete_ec_packet}")
 
 main()
