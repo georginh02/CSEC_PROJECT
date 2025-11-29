@@ -33,7 +33,7 @@ def main():
         # use the rsa_public_key_converter to remove all unessecary data and just get the proper formatted servers public key
         decoded_servers_public_key = rsa_public_key_converter(decoded_response_from_server)
         
-        # store the servers rsa public key in a function that will be used later in to encrypt the session id with the servers public key
+        # send the decoded_servers_public_key into the ec_packet function so it can make the paket to send back to the server
         complete_ec_packet = ec_packet(decoded_servers_public_key)
         s.send(complete_ec_packet.encode("utf-8"))
         print(f"sending ec packet to server {complete_ec_packet}")

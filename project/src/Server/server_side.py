@@ -2,8 +2,8 @@ import socket
 import os, sys, stat
 import threading
 from checks import is_secure
-from packets import not_secure_packet
-from packets import secure_connection_packet
+from packets import not_secure_packet , secure_connection_packet
+from decryption import decrypt_ec_packet
 
 class myThread(threading.Thread):
     def __init__(self, s , add):
@@ -31,6 +31,10 @@ class myThread(threading.Thread):
             recived_ec_packet = self.sock.recv(1024)
             decoded_ec_packet = recived_ec_packet.decode("utf-8")
             print(f"recived ec packet from client.. \n {decoded_ec_packet}")
+            
+            # calling the decrypt_ec_packet to get the algorithm session id and public key of the server
+            decrypt_ec_packet(decoded_ec_packet)
+            
         else:
             na_secure_packet = self.sock.send(not_secure_packet().encode("utf-8"))
             print(f"Sending {na_secure_packet} packet(s) to client as connection will not be encrypted")   
