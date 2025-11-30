@@ -9,9 +9,9 @@ def decrypt_ec_packet(ec_packet: str) -> tuple[str, bytes , str]:
     stripping_brackets = ec_packet.strip("()").split(",")
     private_key = RSA.import_key(severs_private_key)
     cipher_rsa = PKCS1_OAEP.new(private_key , SHA256)
+    algorithm = stripping_brackets[1]
     
-    if stripping_brackets[1] == "aes" or stripping_brackets[1] == "caesar":
-        algorithm = stripping_brackets[1]
+    if algorithm in ("aes", "caesar"):
         session_id = stripping_brackets[2].strip()
         client_public_key = stripping_brackets[3]
         encrypted_session_bytes = base64.b64decode(session_id)
