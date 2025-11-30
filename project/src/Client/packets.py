@@ -3,6 +3,7 @@ from session import session_generator , random_number
 from rsa_key_generation_client import get_rsa_public_key_client
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
+from Crypto.Hash import SHA256
 import base64
 
 def start_packet() -> list[str]:
@@ -19,10 +20,11 @@ def algo_and_encrypted_session(server_public_key: bytes) -> tuple[str , str]:
     """
     algorithm = encryption_choice()
     rsa_key = RSA.import_key(server_public_key)
-    cipher_rsa = PKCS1_OAEP.new(rsa_key)
+    cipher_rsa = PKCS1_OAEP.new(rsa_key , SHA256)
 
     if algorithm == "aes":
-        session_id = session_generator()          
+        session_id = session_generator()    
+        print(session_id)      
         session_key = bytes.fromhex(session_id)       
         encrypted_aes_with_server_public_key = cipher_rsa.encrypt(session_key)
         base64_conversion = base64.b64encode(encrypted_aes_with_server_public_key).decode("utf-8")

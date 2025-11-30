@@ -6,8 +6,9 @@ def rsa_keys_client() -> tuple[bytes, bytes]:
     public_key = key.publickey().export_key()
     return private_key , public_key
 
+CLIENT_PRIVATE_KEY, CLIENT_PUBLIC_KEY = rsa_keys_client()
+
 def get_rsa_public_key_client() -> bytes:
     """Get clients rsa public key"""
-    private , public = rsa_keys_client()
-    return public
+    return CLIENT_PUBLIC_KEY
 
