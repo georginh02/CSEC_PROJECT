@@ -1,13 +1,14 @@
 import socket
-from packets import start_packet , packet_formatter , algo_and_encrypted_session , ec_packet
+from client_prompting import user_commands 
+from packets import start_packet , packet_formatter ,  ec_packet
 from helpers import rsa_public_key_converter 
-import base64
+
 
 def main():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     host = socket.gethostname()
-    port = 8083
+    port = 8080
 
     s.connect((host, port))
 
@@ -37,5 +38,10 @@ def main():
         complete_ec_packet = ec_packet(decoded_servers_public_key)
         s.send(complete_ec_packet.encode("utf-8"))
         print(f"sending ec packet to server {complete_ec_packet}")
-
+        
+    while True:
+        user_choice = user_commands()  
+        s.send(user_choice.encode("utf-8"))
+        print(f"sending users choice and complete cm packet to server: {user_choice}")
+        
 main()

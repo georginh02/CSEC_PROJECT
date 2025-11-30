@@ -115,5 +115,3 @@ def user_commands() -> str:
         case _:
             print("Invalid command.")
             return user_commands()
-
-print(user_commands())

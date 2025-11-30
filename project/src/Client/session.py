@@ -1,7 +1,5 @@
 import secrets
 import random 
-import base64
-from rsa_key_generation_client import rsa_keys_client
 
 def session_generator():
     session_id = secrets.token_hex(16)
