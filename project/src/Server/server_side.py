@@ -4,7 +4,8 @@ import threading
 from checks import is_secure
 from decryption import decrypt_ec_packet
 from packets import not_secure_packet , secure_connection_packet
-from helpers import execute_user_commands
+from helpers import execute_user_commands , openread_check , openwrite_check
+import os
 
 class myThread(threading.Thread):
     def __init__(self, s , add):
@@ -44,11 +45,39 @@ class myThread(threading.Thread):
             decoded_user_commands = user_commands.decode("utf-8")
             print(f"recived {decoded_user_commands} from client")
             
-            print(f"executing ... {execute_user_commands(decoded_user_commands)}")
+            if decoded_user_commands[4:12] == "openRead":
+                openread_check(self.sock , decoded_user_commands)
+                continue
+            
+            if decoded_user_commands[4:13] == "openWrite":
+                dm_packet = self.sock.recv(4096)  
+                decoded_dm_packet = dm_packet.decode("utf-8")
+                print(f"recived dm packet from client {decoded_dm_packet}")
+                
+                openwrite_check(self.sock, decoded_user_commands, decoded_dm_packet)
+                continue
+            
+            
+            output = execute_user_commands(decoded_user_commands)
+    
+            if output:
+                sc = "(SC)"
+                print(output)
+                self.sock.send(sc.encode("utf-8"))
+            else:
+                ee = "(EE)"
+                self.sock.send(ee.encode("utf-8"))
+            
+            if decoded_user_commands.strip("()").startswith("EE"):
+                print("server has been notified that client raised an exception packet (EE)")
+            elif decoded_user_commands.strip("()").startswith("End"):
+                print("bye client")
+                self.sock.close()
+                break
             
 serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 host = socket.gethostname()
-port = 8080
+port = 8081
 serversocket.bind((host, port))
 serversocket.listen(5)
 

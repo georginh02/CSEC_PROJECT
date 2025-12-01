@@ -1,4 +1,4 @@
-from session import session_generator , random_number
+from packets import encrypt_data_if_secure
 
 def encryption_type() -> int:
     """
@@ -87,13 +87,16 @@ def user_commands() -> str:
         case "openwrite":
             filename = input("File to write to: ")
             content = input("Enter text to write into file: ")
+            
+            payload = encrypt_data_if_secure(content)
+            
             return [
                 f"(CM,openWrite,{filename})",
-                f"(DP,{content})"
+                f"(DP,{payload})"
             ]
 
         # ----------------------
-        # INFO COMMANDS
+
         case "dir":
             return "(CM,prompt,dir)"
 

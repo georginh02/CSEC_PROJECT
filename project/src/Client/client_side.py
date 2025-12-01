@@ -8,7 +8,7 @@ def main():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     host = socket.gethostname()
-    port = 8080
+    port = 8081
 
     s.connect((host, port))
 
@@ -39,9 +39,41 @@ def main():
         s.send(complete_ec_packet.encode("utf-8"))
         print(f"sending ec packet to server {complete_ec_packet}")
         
-    while True:
-        user_choice = user_commands()  
-        s.send(user_choice.encode("utf-8"))
-        print(f"sending users choice and complete cm packet to server: {user_choice}")
-        
+    count = 0 
+    try:  
+        while True:
+            user_choice = user_commands()
+            if isinstance(user_choice , list):
+                for paket in user_choice:
+                    s.send(paket.encode("utf-8"))
+                    print(f"sending packet to server (openwrite): {paket}")
+            else:   
+                s.send(user_choice.encode("utf-8"))
+                print(f"sending users choice and complete cm packet to server: {user_choice}")
+                
+            packet_recived = s.recv(1024)
+            decoded_packet_from_server = packet_recived.decode("utf-8")
+            
+            if decoded_packet_from_server.strip("()").startswith("SC"):
+                print(f"recived sucessful packet from server: {decoded_packet_from_server}")
+
+            elif decoded_packet_from_server.strip("()").startswith("EE"):
+                count += 1
+                if count < 2:
+                    print(f"this is your {count} exception reporting to server...")
+                    print("pls note you only have 2 tries before connection gets closed automatically")
+                else:
+                    print("closing connection")
+                    end_packet = "(End)"
+                    s.send(end_packet.encode("utf-8"))
+                    print("sending notice to server that client decided to end conversation")
+                    s.close()
+                    break  
+            
+    except KeyboardInterrupt:           
+        print("client ended the connection by cntrl-c ")
+        end_packet = "(End)"
+        s.send(end_packet.encode("utf-8"))
+        print(f"Sent {end_packet} packet to server")
+        s.close()
 main()
