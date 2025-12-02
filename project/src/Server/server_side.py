@@ -52,7 +52,7 @@ class myThread(threading.Thread):
             if decoded_user_commands[4:13] == "openWrite":
                 dm_packet = self.sock.recv(4096)  
                 decoded_dm_packet = dm_packet.decode("utf-8")
-                print(f"recived dm packet from client {decoded_dm_packet}")
+                print(f"recived dp packet from client {decoded_dm_packet}")
                 
                 openwrite_check(self.sock, decoded_user_commands, decoded_dm_packet)
                 continue
