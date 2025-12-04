@@ -6,12 +6,26 @@ import os
 
     
 def execute_user_commands( command: str) -> tuple[bool , str]: 
+    global absolute_dir
     user_command = command.strip("()").split(",")
     stripped_command = user_command[2].strip()
+    check_for_cd = stripped_command.split()
+    working_dir = absolute_dir
+    
+    if check_for_cd[0].lower() == "cd":
+        directory = check_for_cd[1]
+        new_path = os.path.join(working_dir, directory)
+        new_path = os.path.normpath(new_path)
+        working_dir = new_path
+        
+        if os.path.isdir(working_dir):
+            absolute_dir = new_path 
+            return True , f"changed directory to: {working_dir}"
+        return False , f"directory dosent exist : {working_dir}"
     
     try:
         complete_command = subprocess.run(
-            [executable , root_dir, stripped_command ] , cwd=absolute_dir ,  capture_output= True ,  text = True
+            [executable , root_dir, stripped_command ] , cwd=working_dir ,  capture_output= True ,  text = True 
             )
         output = complete_command.stdout.strip()
     

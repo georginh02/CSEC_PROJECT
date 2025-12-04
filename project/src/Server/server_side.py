@@ -84,7 +84,7 @@ class myThread(threading.Thread):
                 continue
             
             # for other system commands we just proceed as normal
-            bool , output = execute_user_commands(decoded_user_commands)
+            bool , output = execute_user_commands( decoded_user_commands)
             
             # so if its the function executed properly it will send an (SC) packet
             if bool:
@@ -93,7 +93,7 @@ class myThread(threading.Thread):
                 print(f"sending {sc} packet to client...")
                 self.sock.send(sc.encode("utf-8"))
                 
-            # if it dosent Execute properly it will send an (EE) packet to the client 
+            # if false it will send an (EE) packet to the client 
             else:
                 print(output)
                 ee = "(EE)"
