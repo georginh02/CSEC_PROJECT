@@ -6,12 +6,15 @@ import os
 
     
 def execute_user_commands( command: str) -> tuple[bool , str]: 
+    """ simple function to execute all comands except the openread and openwrite"""
+    
     global absolute_dir
     user_command = command.strip("()").split(",")
     stripped_command = user_command[2].strip()
     check_for_cd = stripped_command.split()
     working_dir = absolute_dir
     
+    # the reason i picked on cd was because my windows system in running on wsl so i cant acess my file system and cd wasnt working so i had to create the logic for it  
     if check_for_cd[0].lower() == "cd":
         directory = check_for_cd[1]
         new_path = os.path.join(working_dir, directory)
@@ -23,6 +26,7 @@ def execute_user_commands( command: str) -> tuple[bool , str]:
             return True , f"changed directory to: {working_dir}"
         return False , f"directory dosent exist : {working_dir}"
     
+    # where we run all the commands on the server
     try:
         complete_command = subprocess.run(
             [executable , root_dir, stripped_command ] , cwd=working_dir ,  capture_output= True ,  text = True 
@@ -38,6 +42,7 @@ def execute_user_commands( command: str) -> tuple[bool , str]:
         return False , output 
     
 def openread_check(sock , user_command: str):
+    """ function to read from the file"""
     file_path = os.path.join(absolute_dir , user_command[13:-1])
     successful_packet = "(SC)"
     try:
@@ -60,12 +65,14 @@ def openread_check(sock , user_command: str):
                 
 
 def openwrite_check(sock , cm_packet: str , dm_packet: str):
+    """ function to write to a file"""
     file = cm_packet[14:-1].strip()
     file_path = os.path.join(absolute_dir , file)
     payload = dm_packet[4:-1]
     successful_packet = "(SC)"
     
     text = decrypt_data_if_secure_server(payload)
+    
     try:
         with open(file_path, "w") as file:
             file.write(text)

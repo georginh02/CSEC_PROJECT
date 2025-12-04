@@ -52,18 +52,24 @@ def main():
     count = 0 
     try:  
         while True:
+            # calling the function that allowed the user to pick the commands he wanted to run
             user_choice = user_commands()
+            
+            # to diffrenciate openwrite from the rest i made it into a list to we can easily acess it and send it across the system / the isinstance(user_choice , list) checks for wheter the returned values of the user_commands is a list which only openwrite is
             if isinstance(user_choice , list):
                 for paket in user_choice:
                     s.send(paket.encode("utf-8"))
                     print(f"sending packet to server (openwrite): {paket}")
             else:   
+                # all other commands excluding openwrite are sent to the server
                 s.send(user_choice.encode("utf-8"))
                 print(f"sending users choice and complete cm packet to server: {user_choice}")
-                
+            
+            # recive data from the server
             packet_recived = s.recv(1024)
             decoded_packet_from_server = packet_recived.decode("utf-8")
             
+            # here we check if the packet recived from the server is an exception packet and we keep count aswell if 2 EE packets are sent then we will send the server an End packet which would then terminate the clients session
             if decoded_packet_from_server.strip("()").startswith("EE"):
                 count += 1
                 if count < 2:
@@ -77,19 +83,19 @@ def main():
                     s.send(end_packet.encode("utf-8"))
                     s.close()
                     break  
-                
+            # here we check for the for all commands except the openread because we are getting a datapacket and a sucessful packet back from the server   
             elif decoded_packet_from_server.strip("()").startswith("SC"):
                 print(f"recived sucessful packet from server: {decoded_packet_from_server}..")
             else:
+                # this is the part that where we recive the data packet back from the openread command and we filter it out
                 if "(SC)" in decoded_packet_from_server:
                     text_part, seperator , after  = decoded_packet_from_server.partition("(SC)")
                     decrypted_if_secure = decrypt_data_if_secure(text_part)
                     print(f"proof of decryption: {text_part}")
                     print(f"recived the text packet from server: {decrypted_if_secure}")
                     print(f"recived sucessful packet from server: {seperator}...")
-               
-            
-            
+                    
+    # here all i did was if the client decided to crtl c then it would send the packet back from the server       
     except KeyboardInterrupt:           
         print("client ended the connection by cntrl-c ")
         end_packet = "(End)"
