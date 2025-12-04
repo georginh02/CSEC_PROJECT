@@ -9,15 +9,18 @@ ALGO = None
 AES_SESSION_KEY = None    
 CAESAR_SHIFT = None  
 
+#----------------------------------------------------------------
+# step 1
 def encryption_type() -> int:
     """
     asks the client if they want encrypted communication or not
      
     Encrypted:
-    - If the client selects number 1 then it the function will store number one 
+    - If the client selects number 1 then the function will store number one 
 
     Non Encrypted:
-    - 
+    - if the client selects number 0 then the function will store number one 
+    
     """
     start_packet_options= {
         "Non Secured RFMP v1.0": 0 ,
@@ -25,12 +28,14 @@ def encryption_type() -> int:
         }
     message = f"If you want to use {list(start_packet_options.keys())[0]} please enter 0 or please enter 1 for {list(start_packet_options.keys())[1]}: "
     
+    # the try and except block here is to prevent the user from picking characters 
     try:
         user_inp = int(input(message))
-    except Exception as e:
+    except ValueError as e:
         print("Please enter either 0 or 1")
         return encryption_type()
     
+    # 
     if user_inp not in start_packet_options.values() :
         print("Please enter either 0 or 1")
         return encryption_type()
@@ -41,8 +46,22 @@ def encryption_type() -> int:
         print(f"you have selected {list(start_packet_options.keys())[1]}")
         return start_packet_options["Secured RFMP v1.0"]
 
+def start_packet() -> list[str]:
+    """ this start packet function waits for the user to choose if he wants encryption or not and then formats it in packet = ["SS" , "RFMP" , "v1.0" , ("0" or "1") -> this is the users choice from encryption_packet]   """
+    secure_flag = encryption_type()
+    packet = ["SS" , "RFMP" , "v1.0" , str(secure_flag)]
+    return packet
+
+def packet_formatter(packet) -> str:
+    """ this packet formatter function formats the initial packet // so what it does is adds () to the start and the end and joins the list with , at the end of each index"""
+    message = "(" + ",".join(packet) + ")"
+    return message
+#------------------------------------------
+
+# Step 10
 
 def encryption_choice() -> str:
+    """client chooses either aes or ceaser encryption"""
     user_input = input("what type of encryption do you want Aes or Caesar: ")
     if user_input.lower()== "aes":
         return user_input.lower()
@@ -52,21 +71,15 @@ def encryption_choice() -> str:
          print("pls enter a proper option")
          return encryption_choice() 
          
-def start_packet() -> list[str]:
-    secure_flag = encryption_type()
-    packet = ["SS" , "RFMP" , "v1.0" , str(secure_flag)]
-    return packet
 
 def algo_and_encrypted_session(server_public_key: bytes) -> tuple[str , str]:
-    """ algorithm and encryption type
+    """
+        user selects the encryption tye he wants either aes or ceaser then we encrypt the session key
 
-        - Aes: random int -> 
-        - Caesar : rsa encryption(binary bytes) -> base64 bytes -> decode utf-8 (converts base64 bytes into string)
-    
     """
     global ALGO , AES_SESSION_KEY , CAESAR_SHIFT
     
-    algorithm = encryption_choice()
+    algorithm = encryption_choice() 
     rsa_key = RSA.import_key(server_public_key)
     cipher_rsa = PKCS1_OAEP.new(rsa_key , SHA256)
 
@@ -93,23 +106,16 @@ def algo_and_encrypted_session(server_public_key: bytes) -> tuple[str , str]:
         AES_SESSION_KEY = None
         
         return algorithm, base64_conversion
-     
 
 def ec_packet(server_public_key: bytes) -> str:
+    """ here we the complete ec packet , we call this function in the client_side"""
     algorithm , base64_conversion = algo_and_encrypted_session(server_public_key)
     client_rsa_public_key = get_rsa_public_key_client()
     client_rsa_public_key = client_rsa_public_key.decode("utf-8")
     complete_ec_packet = "(" +"EC" + "," + algorithm + ","  + base64_conversion + "," + client_rsa_public_key + ")"
     return complete_ec_packet
-    
-    
 
-
-def packet_formatter(packet) -> str:
-    """ this packet formatter function formats the initial packet"""
-    message = "(" + ",".join(packet) + ")"
-    return message
-
+#------------------------------------------
 def encrypt_data_if_secure(plaintext: str) -> str:
     """
     Use ALGO + session key/shift if set.
@@ -154,4 +160,7 @@ def decrypt_data_if_secure(ciphertext: str) -> str:
         shift = CAESAR_SHIFT
         return "".join(chr((ord(c) - shift) % 256) for c in ciphertext)
 
-    return ciphertext
+    return ciphertext  
+
+
+    

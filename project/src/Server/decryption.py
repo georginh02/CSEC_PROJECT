@@ -8,6 +8,8 @@ ALGO = None
 AES_SESSION_KEY = None
 CAESAR_SHIFT = None
 
+#--------------------------------------------------------
+# Step 13
 def decrypt_ec_packet(ec_packet: str) -> tuple[str, bytes , str]:
     global ALGO, AES_SESSION_KEY, CAESAR_SHIFT
      
@@ -22,7 +24,7 @@ def decrypt_ec_packet(ec_packet: str) -> tuple[str, bytes , str]:
         client_public_key = stripping_brackets[3]
         encrypted_session_bytes = base64.b64decode(session_id)
         session_key = cipher_rsa.decrypt(encrypted_session_bytes)
-        # ses = session_key.hex().strip()
+        #ses = session_key.hex().strip() -> if docter wants to see it decrypted pls uncomment
         
         if algorithm == "aes":
             ALGO = "aes"
@@ -35,11 +37,12 @@ def decrypt_ec_packet(ec_packet: str) -> tuple[str, bytes , str]:
             AES_SESSION_KEY = None
 
         return algorithm , session_key , client_public_key
-
+    
+#--------------------------------------------------------
 def encrypt_data_if_secure_server(plaintext: str) -> str:
     """
-    Encrypt text using the negotiated algorithm (AES/Caesar) if ALGO is set.
-    If ALGO is None -> return plaintext as-is (unencrypted mode).
+    Encrypt text using the negotiated algorithm Aes or caesar if ALGO is set.
+    If ALGO is None -> return plaintext as-is unencrypted comms.
     """
     if ALGO is None:
         return plaintext
@@ -60,8 +63,8 @@ def encrypt_data_if_secure_server(plaintext: str) -> str:
 
 def decrypt_data_if_secure_server(ciphertext: str) -> str:
     """
-    Decrypt text using the negotiated algorithm if ALGO is set.
-    If ALGO is None -> return ciphertext as-is (unencrypted mode).
+    same logic as before.
+    same logic as before.
     """
     if ALGO is None:
         return ciphertext

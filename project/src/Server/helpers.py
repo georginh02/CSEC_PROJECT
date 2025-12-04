@@ -3,12 +3,12 @@ from decryption import encrypt_data_if_secure_server , decrypt_data_if_secure_se
 import subprocess
 import os
 
-def execute_user_commands(command: str) -> str: 
-    user_command = command.strip("()").split(",")
+
     
-    if len(user_command) < 3:
-        return ""
-    stripped_command = user_command[2]
+def execute_user_commands( command: str) -> str: 
+    user_command = command.strip("()").split(",")
+    stripped_command = user_command[2].strip()
+    
     try:
         complete_command = subprocess.run(
             [executable , root_dir, stripped_command ] , cwd=absolute_dir ,  capture_output= True ,  text = True
@@ -17,7 +17,7 @@ def execute_user_commands(command: str) -> str:
     
     except Exception as e:
             print(f"Error {e}")        
-
+    
 def openread_check(sock , user_command: str):
     file_path = os.path.join(absolute_dir + "/" + user_command[13:-1])
     successful_packet = "(SC)"
@@ -34,6 +34,7 @@ def openread_check(sock , user_command: str):
         sock.send(successful_packet.encode("utf-8"))
         print(f"sending success packet to client: {successful_packet}")
     except FileNotFoundError:
+        # this is where the only exception can happen because if the file dosent exist then we will send an ee packet 
             print("Error: The file was not found.")
             ee = "(EE,404,File not found)"
             sock.send(ee.encode("utf-8"))   
@@ -57,3 +58,4 @@ def openwrite_check(sock , cm_packet: str , dm_packet: str):
             print(f"Error occured: {e}")
             ee = f"(EE,404,{e})"
             sock.send(ee.encode("utf-8"))  
+            
