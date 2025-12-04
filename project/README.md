@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Client Side: main client_side.py
 1.	Packets:
     a.	Def encryption type -> choose either encrypted or unencrypted by entering 0(unencrypted) or 1 (encrypted)  
