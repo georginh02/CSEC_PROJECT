@@ -68,21 +68,24 @@ def main():
                 count += 1
                 if count < 2:
                     print(f"this is your {count} exception reporting to server...")
+                    print(f"issue {decoded_packet_from_server}")
                     print("pls note you only have 2 tries before connection gets closed automatically")
                 else:
-                    print("closing connection")
+                    print("Error limit exceeded , closing connection...")
+                    print("sending notice to server that client decided to end conversation")
                     end_packet = "(End)"
                     s.send(end_packet.encode("utf-8"))
-                    print("sending notice to server that client decided to end conversation")
                     s.close()
                     break  
+                
             elif decoded_packet_from_server.strip("()").startswith("SC"):
-                print(f"recived sucessful packet from server: {decoded_packet_from_server}")
+                print(f"recived sucessful packet from server: {decoded_packet_from_server}..")
             else:
-                sucess_packet = s.recv(1024)
-                decoded_sucess_packet_from_server = sucess_packet.decode("utf-8")
-                print(f"recived the text packet from client: {decoded_packet_from_server}")
-                print(f"recived sucessful packet from server: {decoded_sucess_packet_from_server}")
+                if "(SC)" in decoded_packet_from_server:
+                    text_part, seperator , after  = decoded_packet_from_server.partition("(SC)")
+                    print(f"recived the text packet from server: {text_part}")
+                    print(f"recived sucessful packet from server: {seperator}...")
+               
             
             
     except KeyboardInterrupt:           

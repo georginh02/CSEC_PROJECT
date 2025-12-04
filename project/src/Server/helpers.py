@@ -5,7 +5,7 @@ import os
 
 
     
-def execute_user_commands( command: str) -> str: 
+def execute_user_commands( command: str) -> tuple[bool , str]: 
     user_command = command.strip("()").split(",")
     stripped_command = user_command[2].strip()
     
@@ -13,13 +13,18 @@ def execute_user_commands( command: str) -> str:
         complete_command = subprocess.run(
             [executable , root_dir, stripped_command ] , cwd=absolute_dir ,  capture_output= True ,  text = True
             )
-        return complete_command.stdout.strip()
+        output = complete_command.stdout.strip()
     
     except Exception as e:
-            print(f"Error {e}")        
+            return False, str(e).strip()       
+
+    if complete_command.returncode == 0:
+        return  True , output 
+    else:
+        return False , output 
     
 def openread_check(sock , user_command: str):
-    file_path = os.path.join(absolute_dir + "/" + user_command[13:-1])
+    file_path = os.path.join(absolute_dir , user_command[13:-1])
     successful_packet = "(SC)"
     try:
         with open(file_path, "r") as file:
@@ -42,7 +47,7 @@ def openread_check(sock , user_command: str):
 
 def openwrite_check(sock , cm_packet: str , dm_packet: str):
     file = cm_packet[14:-1].strip()
-    file_path = os.path.join(absolute_dir + "/" + file)
+    file_path = os.path.join(absolute_dir , file)
     payload = dm_packet[4:-1]
     successful_packet = "(SC)"
     

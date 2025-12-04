@@ -65,7 +65,7 @@ class myThread(threading.Thread):
                 
             # check if there is any (End) packets from the client
             elif decoded_user_commands.strip("()").startswith("End"):
-                print(f"bye client {decoded_user_commands}")
+                print("bye client")
                 self.sock.close()
                 break
             
@@ -84,17 +84,20 @@ class myThread(threading.Thread):
                 continue
             
             # for other system commands we just proceed as normal
-            output = execute_user_commands(decoded_user_commands)
+            bool , output = execute_user_commands(decoded_user_commands)
             
             # so if its the function executed properly it will send an (SC) packet
-            if output:
-                sc = "(SC)"
+            if bool:
                 print(output)
+                sc = "(SC)"
+                print(f"sending {sc} packet to client...")
                 self.sock.send(sc.encode("utf-8"))
                 
             # if it dosent Execute properly it will send an (EE) packet to the client 
             else:
+                print(output)
                 ee = "(EE)"
+                print(f"sending {ee} packet to client...")
                 self.sock.send(ee.encode("utf-8"))
             
           
