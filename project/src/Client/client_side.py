@@ -8,7 +8,7 @@ def main():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     host = socket.gethostname()
-    port = 8081
+    port = 8082
 
     s.connect((host, port))
     

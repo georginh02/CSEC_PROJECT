@@ -118,14 +118,13 @@ def ec_packet(server_public_key: bytes) -> str:
 #------------------------------------------
 def encrypt_data_if_secure(plaintext: str) -> str:
     """
-    Use ALGO + session key/shift if set.
-    If ALGO is None -> no encryption.
+    Encrypt text using the negotiated algorithm Aes or caesar if ALGO is set.
+    If ALGO is None -> return plaintext as-is unencrypted comms.
     """
     if ALGO is None:
         return plaintext
 
     if ALGO == "aes":
-        # example AES using EAX; adjust to your own implementation
         cipher = AES.new(AES_SESSION_KEY, AES.MODE_EAX)
         nonce = cipher.nonce
         ciphertext, tag = cipher.encrypt_and_digest(plaintext.encode("utf-8"))
@@ -141,8 +140,7 @@ def encrypt_data_if_secure(plaintext: str) -> str:
 
 def decrypt_data_if_secure(ciphertext: str) -> str:
     """
-    Reverse of encrypt_data_if_secure.
-    If ALGO is None -> return as-is.
+    same logic as before but it decrypts text depending on the algorithm chosen
     """
     if ALGO is None:
         return ciphertext
@@ -161,6 +159,3 @@ def decrypt_data_if_secure(ciphertext: str) -> str:
         return "".join(chr((ord(c) - shift) % 256) for c in ciphertext)
 
     return ciphertext  
-
-
-    
