@@ -91,7 +91,7 @@ def main():
                 if "(SC)" in decoded_packet_from_server:
                     text_part, seperator , after  = decoded_packet_from_server.partition("(SC)")
                     decrypted_if_secure = decrypt_data_if_secure(text_part)
-                    print(f"proof of decryption: {text_part}")
+                    print(f"initial text recived from server: {text_part}")
                     print(f"recived the text packet from server: {decrypted_if_secure}")
                     print(f"recived sucessful packet from server: {seperator}...")
                     

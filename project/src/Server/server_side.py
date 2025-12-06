@@ -103,8 +103,8 @@ class myThread(threading.Thread):
           
             
 serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-host = socket.gethostname()
-port = 8081
+host = socket.gethostname() # have to change this to "127.0.0.1" for the client in c to be able to connect
+port = 8082
 serversocket.bind((host, port))
 serversocket.listen(5)
 

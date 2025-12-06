@@ -51,11 +51,10 @@ def openread_check(sock , user_command: str):
             print(f"file content: {content}")
         payload = encrypt_data_if_secure_server(content)
         dp_packet = f"({payload})"
-        sock.send(dp_packet.encode("utf-8"))
-        print(f"sending response back to client (openread): {dp_packet}")
-
         successful_packet = "(SC)"
+        sock.send(dp_packet.encode("utf-8"))
         sock.send(successful_packet.encode("utf-8"))
+        print(f"sending response back to client (openread): {dp_packet}")
         print(f"sending success packet to client: {successful_packet}")
     except FileNotFoundError:
         # this is where the only exception can happen because if the file dosent exist then we will send an ee packet 

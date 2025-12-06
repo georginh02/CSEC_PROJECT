@@ -63,8 +63,7 @@ def encrypt_data_if_secure_server(plaintext: str) -> str:
 
 def decrypt_data_if_secure_server(ciphertext: str) -> str:
     """
-    same logic as before.
-    same logic as before.
+    same logic as before. ( encrypt_data_if_secure_server)
     """
     if ALGO is None:
         return ciphertext
